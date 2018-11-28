@@ -9,19 +9,28 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <linux/input.h>
-#include<signal.h>
+#include <signal.h>
+#include <termios.h>
+#include <errno.h>
 
 #define COMMAND_HISTORY "./.history"
 #define COMMAND_HISTORY_TMP "./.history.tmp"
 #define DEV_PATH "/dev/input/event1"
+#define PASSWD_PATH "./passwd"
 #define MAX_CWD 50
-#define MAX_HOSTNAME 20
+#define MAX_HOSTNAME 50
 #define MAX_CMD_LIST 2000
 #define MAX_PWD_LIST 2000
 #define MAX_ARG 20
 #define MAX_CMD_LEN 100
 #define MAX_PROMPT_LEN 100
 #define MAX_HISTORY_COMMAND_LINE 500
+#define MAX_USER_NAME 50
+#define MAX_USER_PASSWD 50
+#define MAX_PASSWD_ITEM 100
+#define ECHO_FLAGS (ECHO | ECHOE | ECHOK | ECHONL)
+#define MAX_LOGIN_TIMES 3
+#define MAGICAL 4
 
 
 char cmd_list[MAX_CMD_LIST][20];
@@ -36,3 +45,9 @@ void ww_read_command(char *);
     struct passwd *pwd;
     char *cwd;
 }current_user_info;
+
+/* login user information */
+struct login_user_info{
+    char name[MAX_USER_NAME];
+    char passwd[MAX_USER_PASSWD];
+};

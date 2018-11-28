@@ -48,10 +48,20 @@ int main()
     extern char *s;
     char *prompt = NULL;
     char *arg[MAX_ARG];
+    int login_times = 0;
+    
+    while(login())
+    {
+        if(++login_times == MAX_LOGIN_TIMES)
+        {
+            printf("\033[31mlogin times out!\033[0m\n");
+            return 0;
+        }
+    }
     
     init_signal();
-
     init_other();
+
     /* main loop , repeat forever */
 	while(TRUE) 
 	{

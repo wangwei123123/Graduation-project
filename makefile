@@ -1,7 +1,7 @@
 cc = gcc
 prom = ww_shell
 deps = $(shell find ./ -name "*.h")
-src = ww_shell.c prompt.c read_command.c parse.c exec.c
+src = ww_shell.c prompt.c read_command.c parse.c exec.c login.c
 obj = $(src:%.c=%.o)
 
 $(prom) : $(obj)

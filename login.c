@@ -1,3 +1,13 @@
+/*
+ * ============================================================
+ *       Filename:  login.c
+ *    Description:  user login
+ *        Version:  1.0
+ *        Created:  2018.11.28
+ *         Author:  ww
+ *        Purpose:  Graduation project
+ * ============================================================
+ */
 #include "ww_shell.h"
 #define DEBUG
 /* Used to control whether the input echo is enabled 

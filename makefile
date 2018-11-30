@@ -1,7 +1,7 @@
 cc = gcc
 prom = ww_shell
 deps = $(shell find ./ -name "*.h")
-src = ww_shell.c prompt.c read_command.c parse.c exec.c login.c
+src = ww_shell.c prompt.c read_command.c parse.c exec.c builtin.c login.c
 obj = $(src:%.c=%.o)
 
 $(prom) : $(obj)
@@ -13,7 +13,7 @@ $(prom) : $(obj)
 
 .PHONY: clean
 clean :
-	rm -rf $(prom) test
+	rm -rf $(prom) test *.o
 
 install :
 #

@@ -81,8 +81,27 @@ void get_passwd(char *passwd, int size)
             break;
         }
     }
-
 }
+
+
+void get_gid(char *gid, int size)
+{
+    int c, n;
+
+    printf("Input the gid:");
+    for(n=0;n<size;n++)
+    {
+        c = getchar();
+        if(c!='\n')
+            gid[n] = c;
+        else
+        {
+            gid[n] = '\0';
+            break;
+        }
+    }
+}
+
 /* check if the input user information is correct
  * user exist       1.passwd is correct return 0.
  *                  2.passwd is wrong return -1

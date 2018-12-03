@@ -22,15 +22,98 @@ void ww_history(char *arg[])
     else
     {
         fp = fopen(COMMAND_HISTORY, "r");
+        fgets(str, MAX_CMD_LEN, fp);
         while(!feof(fp))
         {
-            fgets(str, MAX_CMD_LEN, fp);
             printf("%d\t%s", ++i, str);
+            fgets(str, MAX_CMD_LEN, fp);
         }
     }
     fclose(fp);
 }
 
+void ww_addgroup(char *arg[])
+{
+    FILE *fp;
+    int g_flag=0, p_flag=0, flag=1;
+    char name[MAX_GROUP_NAME];
+    char str_g[MAX_GROUP_ITEM];
+    char gid[MAX_GROUP];
+    char passwd[MAX_GROUP_PASSWD];
+    int i, j;
+    int last_gid;
+
+    printf("password only supports numbers and letters\n");
+    
+    get_groupname(name, MAX_GROUP_NAME);
+    
+    fp = fopen(GROUP_PATH, "r");
+    fgets(str_g, MAX_GROUP_ITEM, fp);
+    while(!feof(fp))
+    {
+        i = 0;
+        while(str_g[i]!=';' && name[i]!='\0')
+        {
+            i++;
+            if(str_g[i] != name[i])
+                break;
+        }
+        if(str_g[i]==';' && name[i]=='\0')
+        {
+            g_flag = -1;
+            break;
+        }
+        fgets(str_g, MAX_GROUP_ITEM, fp);
+    }
+    if(g_flag != 0)
+    {
+        printf("\033[31madd group failed : group %s already exist.\033[0m\n", name);
+        return;
+    }
+    fclose(fp);
+  
+    while(flag<4)
+    {
+        p_flag = 0;
+        set_disploy_mode(STDIN_FILENO, 0);
+        get_passwd(passwd, MAX_GROUP_PASSWD);
+        set_disploy_mode(STDIN_FILENO, 1);
+        printf("\n");
+        for(i=0;passwd[i]!='\0';i++)
+        {
+            if(!((passwd[i]>=48 && passwd[i]<=57) || (passwd[i]>=65 && passwd[i]<=90) \
+                || (passwd[i]>=97 && passwd[i]<=122)))
+            {
+                p_flag = -1;
+                printf("%d:\033[31mpassword only supports numbers and letters!!!\033[0m\n", flag);
+                flag++;
+                break;
+            }
+        }
+        if(p_flag == 0)
+            break;
+    }
+    if(p_flag != 0)
+    {
+        printf("\033[31madd group failed : wrong password format.\033[0m\n");
+        return;
+    }
+    encryption(passwd);
+
+
+    i=strlen(str_g) - 3;
+    while(str_g[i] != ';')
+        i--;
+    i++;
+    j = 0;
+    while(str_g[i]!=';')
+        gid[j++] = str_g[i++];
+    last_gid = atoi(gid) + 1;
+    sprintf(gid, "%d", last_gid);
+    fp = fopen(GROUP_PATH, "a");
+    fprintf(fp, "%s;%s;%s;\n", name, passwd, gid);
+    fclose(fp); 
+}
 
 void ww_adduser(char *arg[])
 {
@@ -46,10 +129,10 @@ void ww_adduser(char *arg[])
     get_username(name, MAX_USER_NAME);
    
     fp = fopen(PASSWD_PATH, "r");
+    fgets(str_p, MAX_PASSWD_ITEM, fp);
     while(!feof(fp))
     {
         i = 0;
-        fgets(str_p, MAX_PASSWD_ITEM, fp);
         while(str_p[i]!=';' && name[i]!='\0')
         {
             i++;
@@ -61,6 +144,7 @@ void ww_adduser(char *arg[])
             u_flag = -1;
             break;
         }
+        fgets(str_p, MAX_PASSWD_ITEM, fp);
     }
     fclose(fp);
     if(u_flag != 0)
@@ -101,9 +185,9 @@ void ww_adduser(char *arg[])
     j=0;
     get_gid(gid, MAX_GROUP);
     fp = fopen(GROUP_PATH, "r");
+    fgets(str_g, MAX_GROUP_ITEM, fp);  
     while(!feof(fp))
     {
-        fgets(str_g, MAX_GROUP_ITEM, fp);  
         i=strlen(str_g) - 3;
         while(str_g[i] != ';')
             i--;
@@ -123,6 +207,7 @@ void ww_adduser(char *arg[])
             g_flag = 0;
             break;
         }
+        fgets(str_g, MAX_GROUP_ITEM, fp);  
     }
     fclose(fp);
     if(g_flag != 0)
@@ -136,3 +221,69 @@ void ww_adduser(char *arg[])
     fclose(fp);
 }
 
+
+void ww_deluser(char *arg[])
+{
+    FILE *fp, *ftmp;
+    char str_p[MAX_PASSWD_ITEM];
+    char name[MAX_USER_NAME];
+    int i;
+
+    strcpy(name, arg[1]);
+    fp = fopen(PASSWD_PATH, "r+");
+    ftmp = fopen(PASSWD_PATH_TMP, "w+");
+
+    fgets(str_p, MAX_PASSWD_ITEM, fp);
+    while(!feof(fp))
+    {
+        i = 0;
+        while(str_p[i]!=';' && name[i]!='\0')
+        {
+            i++;
+            if(str_p[i] != name[i])
+                break;
+        }
+        if(str_p[i]!=';' || name[i]!='\0')
+        {
+           fprintf(ftmp, "%s", str_p); 
+        }
+        fgets(str_p, MAX_PASSWD_ITEM, fp);
+    }
+    fclose(ftmp);
+    fclose(fp);
+    remove(PASSWD_PATH);
+    rename(PASSWD_PATH_TMP, PASSWD_PATH);
+}
+
+void ww_delgroup(char *arg[])
+{
+    FILE *fp, *ftmp;
+    char str_g[MAX_GROUP_ITEM];
+    char name[MAX_GROUP_NAME];
+    int i;
+
+    strcpy(name, arg[1]);
+    fp = fopen(GROUP_PATH, "r+");
+    ftmp = fopen(GROUP_PATH_TMP, "w+");
+
+    fgets(str_g, MAX_GROUP_ITEM, fp);
+    while(!feof(fp))
+    {
+        i = 0;
+        while(str_g[i]!=';' && name[i]!='\0')
+        {
+            i++;
+            if(str_g[i] != name[i])
+                break;
+        }
+        if(str_g[i]!=';' || name[i]!='\0')
+        {
+           fprintf(ftmp, "%s", str_g); 
+        }
+        fgets(str_g, MAX_GROUP_ITEM, fp);
+    }
+    fclose(ftmp);
+    fclose(fp);
+    remove(GROUP_PATH);
+    rename(GROUP_PATH_TMP, GROUP_PATH);
+}

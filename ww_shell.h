@@ -17,7 +17,9 @@
 #define COMMAND_HISTORY_TMP "./.history.tmp"
 #define DEV_PATH "/dev/input/event1"
 #define PASSWD_PATH "./etc/passwd"
+#define PASSWD_PATH_TMP "./etc/passwd.tmp"
 #define GROUP_PATH "./etc/group"
+#define GROUP_PATH_TMP "./etc/group.tmp"
 #define MAX_CWD 50
 #define MAX_HOSTNAME 50
 #define MAX_CMD_LIST 2000
@@ -28,6 +30,8 @@
 #define MAX_HISTORY_COMMAND_LINE 500
 #define MAX_USER_NAME 50
 #define MAX_USER_PASSWD 50
+#define MAX_GROUP_NAME 50
+#define MAX_GROUP_PASSWD 50
 #define MAX_GROUP 3
 #define MAX_PASSWD_ITEM 100
 #define MAX_GROUP_ITEM 100

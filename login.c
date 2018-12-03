@@ -84,6 +84,25 @@ void get_passwd(char *passwd, int size)
 }
 
 
+void get_groupname(char *name, int size)
+{
+    int c, n;
+
+    printf("Input the group name:");
+    for(n=0;n<size;n++)
+    {
+        c = getchar();
+        if(c!='\n')
+            name[n] = c;
+        else
+        {
+            name[n] = '\0';
+            break;
+        }
+    }
+}
+
+
 void get_gid(char *gid, int size)
 {
     int c, n;

@@ -194,11 +194,12 @@ void auto_cmd()
         {  
             if(current_key.type == EV_KEY)
             {
+            /*
                 if(current_key.code == KEY_TAB)
                 {
-                    //if()
+                    if()
                 }
-
+            */
                 if(current_key.value==0 && current_key.code==KEY_RIGHT)
                 {    
                     flag = 0;
@@ -208,20 +209,22 @@ void auto_cmd()
                 {    
                     flag = -1;
                 }
-                /*
+              
+              /*
                 if(current_key.value==0 && current_key.code==KEY_ENTER)
                 {
-                    flag = -1;
-                    pthread_exit(NULL);
+                    if(flag == -1);
+                        rl_delete_text(rl_point, rl_end+1);
                 }
                 */
+
                 if(current_key.value==1 && current_key.code==KEY_ENTER)
                 {
-                    if(flag==-1)
+                    if(flag == -1)
                         rl_delete_text(rl_point, rl_end+1);
                     pthread_exit(NULL);
                 }
-                
+               
 
                 if(current_key.value==0 && current_key.code!=KEY_ENTER)
                 {

@@ -287,3 +287,12 @@ void ww_delgroup(char *arg[])
     remove(GROUP_PATH);
     rename(GROUP_PATH_TMP, GROUP_PATH);
 }
+
+void ww_cd(char *arg[])
+{
+    if(chdir(arg[1]))
+    {
+        perror("chdir");
+    }
+    
+}

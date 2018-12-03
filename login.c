@@ -10,6 +10,9 @@
  */
 #include "ww_shell.h"
 #define DEBUG
+
+struct login_user_info login_user;
+    
 /* Used to control whether the input echo is enabled 
  * option is 1 is enable echo,otherwise is disable.
  * */
@@ -158,8 +161,6 @@ int check_user(struct login_user_info user)
 
 int login()
 {
-    struct login_user_info login_user;
-    
     get_username(login_user.name, MAX_USER_NAME);
     set_disploy_mode(STDIN_FILENO, 0); 
     get_passwd(login_user.passwd, MAX_USER_PASSWD);

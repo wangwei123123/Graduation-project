@@ -18,6 +18,8 @@ void ww_exec(char *arg[])
    
     if(strcmp(arg[0], "history") == 0)
         ww_history(arg);
+    else if(strcmp(arg[0], "exit") == 0)
+        exit(0);
     else if(strcmp(arg[0], "adduser") == 0)
         ww_adduser(arg);
     else if(strcmp(arg[0], "addgroup") == 0)
@@ -26,6 +28,8 @@ void ww_exec(char *arg[])
         ww_deluser(arg);
     else if(strcmp(arg[0], "delgroup") == 0)
         ww_delgroup(arg);
+    else if(strcmp(arg[0], "cd") == 0)
+        ww_cd(arg);
     else
     {
         /* fork off child process */

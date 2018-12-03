@@ -16,6 +16,8 @@
 #include "ww_shell.h"
 //#define DEBUG
 
+extern struct login_user_info login_user;
+
 void ww_prompt(char *prompt)
 {
     char cwd[MAX_CWD];
@@ -55,7 +57,8 @@ void ww_prompt(char *prompt)
     #endif
     //printf("\033[1m[MyShell]\033[m\033[1;32m%s@%s\033[m:\033[1;36m%s\033[m￥\n", current_user_info.pwd->pw_name, current_user_info.hostname, current_user_info.cwd);
     
-    sprintf(prompt, "\001\033[1m\002[MyShell]\001\033[m\002\001\033[1;32m\002%s@%s\001\033[m\002:\001\033[1;36m\002%s\001\033[m\002$ ", current_user_info.pwd->pw_name, current_user_info.hostname, current_user_info.cwd);
+   // sprintf(prompt, "\001\033[1m\002[MyShell]\001\033[m\002\001\033[1;32m\002%s@%s\001\033[m\002:\001\033[1;36m\002%s\001\033[m\002$ ", current_user_info.pwd->pw_name, current_user_info.hostname, current_user_info.cwd);
+    sprintf(prompt, "\001\033[1m\002[MyShell]\001\033[m\002\001\033[1;32m\002%s@%s\001\033[m\002:\001\033[1;36m\002%s\001\033[m\002$ ", login_user.name, current_user_info.hostname, current_user_info.cwd);
 }
 
 #ifdef DEBUG

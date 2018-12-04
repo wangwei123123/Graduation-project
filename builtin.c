@@ -10,6 +10,101 @@
  */
 #include "ww_shell.h"
 //#define DEBUG
+void ww_exit()
+{
+    FILE *fp, *ftmp;
+    Com_list *cur;
+    int sum;
+    int count;
+    int flag=0;
+    char ch;
+    
+    extern int command_num;
+    extern int history_num;
+    extern Com_list commands;
+    sum = command_num + history_num;
+    cur = commands.next;
+    
+    if(sum < MAX_HISTORY_COMMAND_LINE)
+    {
+        //Directly stored in the history command file
+        printf("0\n");
+        fp = fopen(COMMAND_HISTORY, "a");
+        while(cur)
+        {
+            fprintf(fp, "%s\n", cur->command);
+            cur = cur->next;
+        }
+        fclose(fp);
+    }
+    else if((sum < 2*MAX_HISTORY_COMMAND_LINE) && (sum >MAX_HISTORY_COMMAND_LINE))
+    {
+        /*
+         * After deleting the contents of some historical 
+         * command files, save the history command file.
+         * */
+        printf("1\n");
+        fp = fopen(COMMAND_HISTORY, "r");
+        ftmp = fopen(COMMAND_HISTORY_TMP, "w");
+        
+        count = sum - MAX_HISTORY_COMMAND_LINE;
+        while(1)
+        {
+            ch = fgetc(fp);
+            if((ch == EOF) || (ch == '\n'))
+            {
+                flag++;
+                if(flag == count)
+                    break;
+            }
+        }
+        
+        if(ch != EOF)
+            while(1)
+            {
+                ch = fgetc(fp);
+                if(ch == EOF)
+                    break;
+                fputc(ch, ftmp);
+            }
+        
+        while(cur)
+        {
+            fprintf(ftmp, "%s\n", cur->command);
+            cur = cur->next;
+        }
+
+        fclose(fp);
+        fclose(ftmp);
+        remove(COMMAND_HISTORY);
+        rename(COMMAND_HISTORY_TMP, COMMAND_HISTORY);
+    }
+    else
+    {
+        /*
+         * Directly generate a new file over the original 
+         * history command file with the command of the 
+         * last upper limit in the linked list.
+         * */
+        printf("2\n");
+        count = sum - 2*MAX_HISTORY_COMMAND_LINE +1;
+    
+        for(flag=0;flag<count;flag++)
+            cur = cur->next;
+
+        fp = fopen(COMMAND_HISTORY, "w+");
+        while(cur)
+        {
+            fprintf(fp, "%s\n", cur->command);
+            cur = cur->next;
+        }
+        fclose(fp);
+    }
+
+    printf("the program will be exit!\n");
+    exit(0);
+}
+
 
 void ww_history(char *arg[])
 {

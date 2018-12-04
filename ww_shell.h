@@ -38,7 +38,10 @@
 #define ECHO_FLAGS (ECHO | ECHOE | ECHOK | ECHONL)
 #define MAX_LOGIN_TIMES 3
 #define MAGICAL 4
-
+#define ASCII_CHAR 95
+#define ASCII_SUB_BASE(x) (x-32)
+#define ASCII_ADD_BASE(x) (x+32)
+#define MAX_CMD_LEN 100
 
 char cmd_list[MAX_CMD_LIST][20];
 char pwd_list[MAX_PWD_LIST][20];
@@ -59,3 +62,19 @@ struct login_user_info{
     char name[MAX_USER_NAME];
     char passwd[MAX_USER_PASSWD];
 };
+
+/* trie to store history command */
+typedef struct tree_node{
+    int weight;
+    struct tree_node *next[ASCII_CHAR];
+}Tree;
+
+/* store the input commands to store into 
+ * history file before exit
+ * */
+typedef struct command_node{
+    char command[MAX_CMD_LEN];
+    struct command_node *next;
+}Com_list;
+
+

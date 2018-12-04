@@ -127,9 +127,14 @@ void readline_init()
     //rl_bind_key ('\t', NULL);
 }
 
-
-/* read history file in reverse row to match the history cmd by input */
-int match_history(char *input, char *history_input, int len)
+/*
+ * 
+ * Use the dictionary tree to optimize the automation of historical 
+ * commands and access and store history commands.
+ * (new function match_history(char *,char *)in trie.c)
+ *
+// read history file in reverse row to match the history cmd by input
+int match_history(char *input, char *history_input)
 {
     FILE *f;
     int c;
@@ -170,7 +175,7 @@ int match_history(char *input, char *history_input, int len)
     fclose(f);
     return -1;
 }
-
+*/
 
 /* auto completion command and auto completion of tab */
 void auto_cmd()
@@ -234,10 +239,10 @@ void auto_cmd()
                     if(strlen(input)==0)
                         continue;
                    
-                    if(match_history(input, history_text, strlen(input)) == 0)
+                    if(match_history(input, history_text) == 0)
                     {
                         strcpy(insert_text, history_text+strlen(input));
-                        insert_text[strlen(insert_text)-1] = '\0';
+                        insert_text[strlen(insert_text)] = '\0';
                         rl_mark = rl_point;
                         rl_insert_text(insert_text);
                         rl_point = rl_mark;
@@ -250,6 +255,13 @@ void auto_cmd()
     close(keys_fd);
 }
 
+/*
+ * Use a linked list to store commands that are entered
+ * during program execution. At the end of the program,
+ * they are stored in the history command file to 
+ * improve performance.
+ * (new function ww_exit() in builtin.c )
+ *
 void write_into_history(char *s)
 {
     FILE *fp, *ftmp;
@@ -257,9 +269,8 @@ void write_into_history(char *s)
     int line = 0;
     int ch;
     
-    /* Calculate whether the number of historical command 
-     * lines exceeds the specified upper limit.  
-     * */
+    // Calculate whether the number of historical command 
+    // lines exceeds the specified upper limit.  
     fp = fopen(COMMAND_HISTORY, "r+");
     while((ch = fgetc(fp)) != EOF)
         if(ch == '\n')
@@ -268,7 +279,7 @@ void write_into_history(char *s)
         flag = 0;
     fclose(fp);
 
-    /* Delete the number of history that exceeds the limit */ 
+    //Delete the number of history that exceeds the limit 
     if(flag == 0)
     {
         fp = fopen(COMMAND_HISTORY, "r");
@@ -293,11 +304,12 @@ void write_into_history(char *s)
         rename(COMMAND_HISTORY_TMP, COMMAND_HISTORY);
     }
 
-    /* write the current command to the history command file. */
+    //write the current command to the history command file.
     fp = fopen(COMMAND_HISTORY, "a");
     fprintf(fp, "%s\n", s);
     fclose(fp);
 }
+*/
 
 void ww_read_command(char *prompt)
 {
@@ -313,10 +325,12 @@ void ww_read_command(char *prompt)
     }
     s = readline(prompt);
     pthread_join(thread_id, NULL);
+    
+    /*store the command to trie and history list*/
     if(s && *s)
     {
-        add_history(s);
-        write_into_history(s);
+        insert_tree(s);
+        store_command(s);
     }
     
 }

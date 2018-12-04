@@ -16,10 +16,10 @@ void ww_exec(char *arg[])
     int status;
     pid_t child_pid;
    
-    if(strcmp(arg[0], "history") == 0)
+    if(strcmp(arg[0], "exit") == 0)
+        ww_exit();
+    else if(strcmp(arg[0], "history") == 0)
         ww_history(arg);
-    else if(strcmp(arg[0], "exit") == 0)
-        exit(0);
     else if(strcmp(arg[0], "adduser") == 0)
         ww_adduser(arg);
     else if(strcmp(arg[0], "addgroup") == 0)

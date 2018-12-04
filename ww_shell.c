@@ -11,14 +11,19 @@
 #include "ww_shell.h"
 #define TRUE 1
 
+extern Tree root;
+extern Com_list commands;
+extern Com_list *rear;
+extern int command_num;
+extern int history_num;
+
 /* signal processing function */
 void sig_handle(int sig)
 {
     /* Ctrl-C */
     if(sig == SIGINT)
     {
-        printf("\nprogram exit\n");
-        exit(0);
+        ww_exit();
     }
 }
 
@@ -32,15 +37,41 @@ void init_signal()
     signal(SIGINT, sig_handle);
 }
 
-void init_other()
+void init_history_command()
 {
-   /* check if .history exists */
-   if(access(COMMAND_HISTORY, F_OK) == -1)
-   {
-        FILE *fp;
+    FILE *fp;
+    char history_command[MAX_CMD_LEN];  
+
+    memset(&root, 0, sizeof(Tree));
+    memset(&commands, 0, sizeof(Com_list));
+    commands.next = NULL;
+    rear = &commands;
+
+    /* check if .history exists */
+    if(access(COMMAND_HISTORY, F_OK) == -1)
+    {
         fp = fopen(COMMAND_HISTORY, "w+");
         fclose(fp);
-   }
+    }
+    else
+    {
+        fp = fopen(COMMAND_HISTORY, "r");
+        fgets(history_command, MAX_CMD_LEN, fp);
+
+        while(!feof(fp))
+        {
+            history_num++;
+            insert_tree(history_command);
+            fgets(history_command, MAX_CMD_LEN, fp);
+        }
+        fclose(fp);
+    }
+}
+
+void init()
+{
+    init_signal();
+    init_history_command();
 }
 
 int main()
@@ -59,8 +90,7 @@ int main()
         }
     }
     
-    init_signal();
-    init_other();
+    init();
 
     /* main loop , repeat forever */
 	while(TRUE) 

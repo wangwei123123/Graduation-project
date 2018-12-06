@@ -16,6 +16,7 @@ extern Com_list commands;
 extern Com_list *rear;
 extern int command_num;
 extern int history_num;
+Tree_var var_tree;
 
 /* signal processing function */
 void sig_handle(int sig)
@@ -68,10 +69,17 @@ void init_history_command()
     }
 }
 
+/* Initialize environment variable structure */
+void init_env_var()
+{
+    memset(&var_tree, 0, sizeof(Tree_var));
+}
+
 void init()
 {
     init_signal();
     init_history_command();
+    init_env_var();
 }
 
 int main()

@@ -46,16 +46,18 @@ int match_history(char *input, char *history_input)
     for(i=0;input[i]!='\0';i++)
     {
         if(cur->next[ASCII_SUB_BASE(input[i])] == NULL)
-            return 0;
+        {    
+            return -1;
+        }
         cur = cur->next[ASCII_SUB_BASE(input[i])];
     }
     strcpy(history_input, input);
 
     max = find_max_next(cur);
     if(max == -1)
+    {  
         return -1;
-    
-
+    }
     while(max != -1)
     {
         max_ch[0] = ASCII_ADD_BASE(max);

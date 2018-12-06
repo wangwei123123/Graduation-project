@@ -30,6 +30,12 @@ void ww_exec(char *arg[])
         ww_delgroup(arg);
     else if(strcmp(arg[0], "cd") == 0)
         ww_cd(arg);
+    else if(strcmp(arg[0], "set") == 0)
+        ww_set(arg);
+    else if(strcmp(arg[0], "unset") == 0)
+        ww_unset(arg);
+    else if(strcmp(arg[0], "echo") == 0)
+        ww_echo(arg);
     else
     {
         /* fork off child process */

@@ -391,3 +391,131 @@ void ww_cd(char *arg[])
     }
     
 }
+
+int del_var_tree(char *str)
+{
+    int i;
+    Tree_var *cur;
+    extern Tree_var var_tree;
+
+    cur = &var_tree;
+    
+    for(i=0;str[i]!='\0';i++)
+    {
+        if(cur->next[ASCII_SUB_BASE(str[i])] == NULL)
+            return -1;
+        cur = cur->next[ASCII_SUB_BASE(str[i])];
+    }
+    cur->flag = 0;
+}
+
+void insert_var_tree(char *str, double value)
+{
+    int i;
+    Tree_var *cur;
+    extern Tree_var var_tree;
+
+    cur = &var_tree;
+    
+    for(i=0;str[i]!='\0';i++)
+    {
+        if(cur->next[ASCII_SUB_BASE(str[i])] == NULL)
+        {
+            Tree_var *new = (Tree_var*)malloc(sizeof(Tree_var));
+            memset(new, 0, sizeof(Tree_var));
+            cur->next[ASCII_SUB_BASE(str[i])] = new;
+        }
+        cur = cur->next[ASCII_SUB_BASE(str[i])];
+    }
+    cur->flag=1;
+    cur->value = value;
+    return;
+}
+
+#ifdef DEBUG
+void traverse_var_tree(Tree_var *cur)
+{
+    static char var_name[ENV_VAR_NAME_LEN];
+    static int pos = 0;
+    int i;
+
+    if(cur == NULL)
+        return;
+    if(cur->flag)
+    {
+        var_name[pos] = '\0';
+        printf("%s = %lf\n", var_name, cur->value);
+    }
+    for(i=0;i<ASCII_CHAR;i++)
+    {
+        var_name[pos++] = ASCII_ADD_BASE(i);
+        traverse_var_tree(cur->next[i]);
+        pos--;
+    }
+}
+#endif
+
+void ww_set(char *arg[])
+{
+    int i;
+    for(i=0;arg[i]!=NULL;i++);
+    if(i!=4 || strcmp(arg[2],"="))
+    {
+        printf("enter format error\n"
+               "Enter as follows : set a = 1\n");
+        return;
+    }
+    insert_var_tree(arg[1], atof(arg[3]));
+}
+
+void ww_unset(char *arg[])
+{
+    int i;
+    for(i=0;arg[i]!=NULL;i++);
+    if(i!=2)
+    {
+        printf("enter format error\n"
+               "Enter as follows : unset a\n");
+        return;
+    }
+    del_var_tree(arg[1]);
+}
+
+int find_var(char *var, double *value)
+{
+    int i;
+    Tree_var *cur;
+    extern Tree_var var_tree;
+
+    cur = &var_tree;
+    for(i=0;var[i]!='\0';i++)
+    {
+        if(cur->next[ASCII_SUB_BASE(var[i])] == NULL)
+        {
+            return 0;
+        }
+        cur = cur->next[ASCII_SUB_BASE(var[i])];
+    }
+    *value = cur->value;
+    return 1;
+}
+
+void ww_echo(char *arg[])
+{
+    int i, j;
+    double value;
+    char str[ENV_VAR_NAME_LEN];
+
+    for(i=1;arg[i]!=NULL;i++)
+    {
+        if(strncmp(arg[i], "$", 1) == 0)
+        {
+            strcpy(str, arg[i]+1);
+            if(find_var(str, &value) == 1)
+                printf("%lf ", value);
+        }
+        else
+            printf("%s ", arg[i]);
+    }
+    printf("\n");
+}

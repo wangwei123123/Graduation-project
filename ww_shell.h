@@ -41,7 +41,7 @@
 #define ASCII_CHAR 95
 #define ASCII_SUB_BASE(x) (x-32)
 #define ASCII_ADD_BASE(x) (x+32)
-#define MAX_CMD_LEN 100
+#define ENV_VAR_NAME_LEN 10
 
 char cmd_list[MAX_CMD_LIST][20];
 char pwd_list[MAX_PWD_LIST][20];
@@ -77,4 +77,11 @@ typedef struct command_node{
     struct command_node *next;
 }Com_list;
 
+/* Storage environment variable */
+typedef struct var_node{
+    int flag;
+    char var_name[ENV_VAR_NAME_LEN];
+    double value;
+    struct var_node *next[ASCII_CHAR];
+}Tree_var;
 

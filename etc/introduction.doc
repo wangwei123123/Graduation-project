@@ -1,0 +1,66 @@
+ww_shell                  Introduction Of The Program                 ww_shell
+
+NAME
+        ww_shell - The Custom Shell
+
+COMMAND FORMAT
+        command [options] [file]
+
+DESCRIPTION
+        ww_shell is a program that appears for graduation design. It implements
+        a simple shell function, and on this basis, adds custom functions to 
+        simplify development problems in daily production operations.
+
+SPECIAL FUNCTION
+    
+    Automatic completion based on historical commands:
+        
+        Description:
+            When the user types a command, the program automatically fills in
+        the current input according to the typed string and the history input
+        command,thereby reducing the user input and reducing the memory command,
+        thereby improving the user's work efficiency.
+            
+            Whenever the user starts typing, two threads are opened, one for 
+        receiving the user-entered string and the other for listening to the
+        user's action on the keyboard.In this way,the function of automatically
+        completing according to historical commands is completed.
+            
+            If the user does not press right key, the cursor flashes in the user
+        input string and the auto-completion string.Pressing enter key directly
+        indicates that the user input has ended and does not require automatic
+        completion of the content;If the user presses right key after automatic
+        completion,the user needs to automatically complete the content.At this
+        time,the cursor flashes after the string is automatically completed,that
+        is,at the end of the input line.
+    
+    Initial Method:
+            Whenever the user presses the keyboard, the input string is matched
+        with each line in the history input command file in the second thread,
+        and the string is added to the input line, otherwise nothing is done.
+        When the user input is finished, the user input is stored in the history
+        command file.
+
+    Later Method:
+            In order to optimize performance,it is decided to use space for time.
+        The reading of the history command file is only run once at the beginning
+        of the program; the writing of the history command file is only run once
+        before the end of the program. In the process of auto-completion, the
+        original comparison with the historical command will no longer be used.
+        The data structure of the tire is introduced here to optimize.
+
+            Whenever the program runs, it is initialized internally, and each line
+        of the command in the history command file is read into the trie in memory
+        for storage. Whenever the user presses the keyboard,the matching process in
+        the auto-completion is searched in the tire. Each time the user presses the
+        enter key,the command is stored in trie and a linked list.Before the program
+        exits, the commands entered during the running of the program in the linked
+        list are stored in the history command file.
+
+    hot key:
+
+        Description:
+            use Ctrl - [char].
+
+            Ctrl - c    :   exit the program.(builtin command : exit)
+

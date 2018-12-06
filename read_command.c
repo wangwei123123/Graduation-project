@@ -196,15 +196,9 @@ void auto_cmd()
     while(1)
     {
         if(read(keys_fd, &current_key, sizeof(current_key)) == sizeof(current_key))
-        {  
+        { 
             if(current_key.type == EV_KEY)
             {
-            /*
-                if(current_key.code == KEY_TAB)
-                {
-                    if()
-                }
-            */
                 if(current_key.value==0 && current_key.code==KEY_RIGHT)
                 {    
                     flag = 0;
@@ -215,13 +209,11 @@ void auto_cmd()
                     flag = -1;
                 }
               
-              /*
-                if(current_key.value==0 && current_key.code==KEY_ENTER)
-                {
-                    if(flag == -1);
-                        rl_delete_text(rl_point, rl_end+1);
-                }
-                */
+                //if(current_key.value==0 && current_key.code==KEY_ENTER)
+                //{
+                //    if(flag == -1);
+                //        rl_delete_text(rl_point, rl_end+1);
+                //}
 
                 if(current_key.value==1 && current_key.code==KEY_ENTER)
                 {
@@ -232,14 +224,14 @@ void auto_cmd()
                
 
                 if(current_key.value==0 && current_key.code!=KEY_ENTER)
-                {
+                {   
                     rl_delete_text(rl_point, rl_end+1);
                     
                     input = rl_copy_text(0,MAX_CMD_LEN);
                     if(strlen(input)==0)
                         continue;
                    
-                    if(match_history(input, history_text) == 0)
+                    if(match_history(input, history_text) != -1)
                     {
                         strcpy(insert_text, history_text+strlen(input));
                         insert_text[strlen(insert_text)] = '\0';

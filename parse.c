@@ -13,6 +13,18 @@
 
 //extern char *arg[MAX_AGR];
 
+/**************************************************************
+ *
+ * Function name : ww_parse
+ * Description : Separate user input and store it in the
+ *               specified address with a space separator.
+ * Parameter : 
+ *              @command    User-entered command.
+ *              @arg        The address to store the result of
+ *                          the segmentation.
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void ww_parse(char *command, char *arg[])
 {
     char *start = command;

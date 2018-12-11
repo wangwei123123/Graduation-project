@@ -10,6 +10,18 @@
  */
 #include "ww_shell.h"
 //#define DEBUG
+
+/**************************************************************
+ *
+ * Function name : ww_exit
+ * Description : The program exits and performs a custom action
+ *               before exiting.E.g,save the commands entered
+ *               during this execution to the history command
+ *               file.
+ * Parameter : NULL
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void ww_exit()
 {
     FILE *fp, *ftmp;
@@ -106,6 +118,19 @@ void ww_exit()
 }
 
 
+/**************************************************************
+ *
+ * Function name : ww_history
+ * Description : View the contents of the history command file
+ *               or clear the built-in commands of the history
+ *               command file.
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : If arg[1] is "clear" for clearing the history
+ *         command file;
+ *         else if arg[1] is NULL for print history command file.
+ * ***********************************************************/
 void ww_history(char *arg[])
 {
     char str[MAX_CMD_LEN];
@@ -127,6 +152,15 @@ void ww_history(char *arg[])
     fclose(fp);
 }
 
+/**************************************************************
+ *
+ * Function name : ww_addgroup
+ * Description : Add a user group. 
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void ww_addgroup(char *arg[])
 {
     FILE *fp;
@@ -210,6 +244,15 @@ void ww_addgroup(char *arg[])
     fclose(fp); 
 }
 
+/**************************************************************
+ *
+ * Function name : ww_adduser
+ * Description : Add a user. 
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void ww_adduser(char *arg[])
 {
     FILE *fp;
@@ -316,7 +359,15 @@ void ww_adduser(char *arg[])
     fclose(fp);
 }
 
-
+/**************************************************************
+ *
+ * Function name : ww_deluser
+ * Description : Del a user. 
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void ww_deluser(char *arg[])
 {
     FILE *fp, *ftmp;
@@ -350,6 +401,15 @@ void ww_deluser(char *arg[])
     rename(PASSWD_PATH_TMP, PASSWD_PATH);
 }
 
+/**************************************************************
+ *
+ * Function name : ww_delgroup
+ * Description : Del a group. 
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void ww_delgroup(char *arg[])
 {
     FILE *fp, *ftmp;
@@ -383,6 +443,15 @@ void ww_delgroup(char *arg[])
     rename(GROUP_PATH_TMP, GROUP_PATH);
 }
 
+/**************************************************************
+ *
+ * Function name : ww_cd
+ * Description : Change current directory. 
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void ww_cd(char *arg[])
 {
     if(chdir(arg[1]))
@@ -392,6 +461,18 @@ void ww_cd(char *arg[])
     
 }
 
+/**************************************************************
+ *
+ * Function name : del_var_tree
+ * Description : Remove variables from the trie of the stored
+ *               variable by the variable name.
+ * Parameter : 
+ *              @str    Specify variable name.
+ * Return : 
+ *              -1 : Specify variable name dosen't exist;
+ *           other : Del success.
+ * Other : NULL
+ * ***********************************************************/
 int del_var_tree(char *str)
 {
     int i;
@@ -409,6 +490,17 @@ int del_var_tree(char *str)
     cur->flag = 0;
 }
 
+/**************************************************************
+ *
+ * Function name : insert_var_tree
+ * Description : Save variables in the trie of the stored
+ *               variable.
+ * Parameter : 
+ *              @str    Specify variable name.
+ *              @value  Value of the variable.
+ * Return : NULL 
+ * Other : NULL
+ * ***********************************************************/
 void insert_var_tree(char *str, double value)
 {
     int i;
@@ -433,6 +525,16 @@ void insert_var_tree(char *str, double value)
 }
 
 #ifdef DEBUG
+/**************************************************************
+ *
+ * Function name : traverse_var_tree
+ * Description : Traversing the trie of the stored variable.
+ * Parameter : 
+ *              @str    Specify variable name.
+ *              @value  Value of the variable.
+ * Return : NULL 
+ * Other : NULL
+ * ***********************************************************/
 void traverse_var_tree(Tree_var *cur)
 {
     static char var_name[ENV_VAR_NAME_LEN];
@@ -455,6 +557,15 @@ void traverse_var_tree(Tree_var *cur)
 }
 #endif
 
+/**************************************************************
+ *
+ * Function name : ww_set
+ * Description : Setting environment variables. 
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL 
+ * Other : NULL
+ * ***********************************************************/
 void ww_set(char *arg[])
 {
     int i;
@@ -468,6 +579,15 @@ void ww_set(char *arg[])
     insert_var_tree(arg[1], atof(arg[3]));
 }
 
+/**************************************************************
+ *
+ * Function name : ww_unset
+ * Description : Unsetting environment variables. 
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL 
+ * Other : NULL
+ * ***********************************************************/
 void ww_unset(char *arg[])
 {
     int i;
@@ -481,6 +601,18 @@ void ww_unset(char *arg[])
     del_var_tree(arg[1]);
 }
 
+/**************************************************************
+ *
+ * Function name : find_var
+ * Description : Find environment variables.
+ * Parameter : 
+ *              @var    variable name.
+ *              @value  The address to store the variable value.
+ * Return :
+ *              0 : Variable doesn't exist;
+ *              1 : Find variable successfully.
+ * Other : NULL
+ * ***********************************************************/
 int find_var(char *var, double *value)
 {
     int i;
@@ -500,6 +632,15 @@ int find_var(char *var, double *value)
     return 1;
 }
 
+/**************************************************************
+ *
+ * Function name : ww_echo
+ * Description : Print user input.
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void ww_echo(char *arg[])
 {
     int i, j;
@@ -518,4 +659,402 @@ void ww_echo(char *arg[])
             printf("%s ", arg[i]);
     }
     printf("\n");
+}
+
+/**************************************************************
+ *
+ * Function name : init_stack_let_num
+ * Description : Init data stack
+ * Parameter : 
+ *              @arg   The address of Stack_let_num. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
+void init_stack_let_num(Stack_let_num *stack)
+{
+    stack->top = -1;
+}
+
+/**************************************************************
+ *
+ * Function name : init_stack_let_num
+ * Description : Init symbol stack
+ * Parameter : 
+ *              @arg   The address of Stack_let_sym. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
+void init_stack_let_sym(Stack_let_sym *stack)
+{
+    stack->top = -1;
+}
+
+/**************************************************************
+ *
+ * Function name : stack_push_let_num
+ * Description : Push data onto Stack_let_num.
+ * Parameter : 
+ *              @stack  The address of Stack_let_num.
+ *              @num    Data pushed onto the stack.
+ * Return :
+ *              -1 : pushing the stack failed.
+ *               0 : pushing the stack successfully.
+ * Other : NULL
+ * ***********************************************************/
+int stack_push_let_num(Stack_let_num *stack, double num)
+{
+    if(stack->top == MAX_LET_NUM-1)
+    {
+        printf("\033[31mData reaches the upper limit,input fails\033[0m\n");
+        return -1;
+    }
+    stack->top++;
+    stack->num[stack->top] = num;
+    return 0;
+}
+
+/**************************************************************
+ *
+ * Function name : stack_push_let_sym
+ * Description : Push symbol onto Stack_let_sym.
+ * Parameter : 
+ *              @stack  The address of Stack_let_sym.
+ *              @num    Symbol pushed onto the stack.
+ * Return :
+ *              -1 : pushing the stack failed.
+ *               0 : pushing the stack successfully.
+ * Other : NULL
+ * ***********************************************************/
+int stack_push_let_sym(Stack_let_sym *stack, char sym)
+{
+    if(stack->top == MAX_LET_NUM-1)
+    {
+        printf("\033[31mSymbol reaches the upper limit,input fails\033[0m\n");
+        return -1;
+    }
+    stack->top++;
+    stack->sym[stack->top] = sym;
+    return 0;
+}
+
+/**************************************************************
+ *
+ * Function name : stack_pop_let_num
+ * Description : Pop the data from the Stack_let_num.
+ * Parameter : 
+ *              @stack  The address of Stack_let_num.
+ * Return : Data popped from the Stack_let_num.
+ * Other : NULL
+ * ***********************************************************/
+double stack_pop_let_num(Stack_let_num *stack)
+{
+    double num;
+
+    num = stack->num[stack->top];
+    stack->top--;
+    return num;
+}
+
+/**************************************************************
+ *
+ * Function name : stack_pop_let_sym
+ * Description : Pop the symbol from the Stack_let_sym.
+ * Parameter : 
+ *              @stack  The address of Stack_let_sym.
+ * Return : Symbol popped from the Stack_let_sym.
+ * Other : NULL
+ * ***********************************************************/
+char stack_pop_let_sym(Stack_let_sym *stack)
+{
+    char sym;
+
+    sym = stack->sym[stack->top];
+    stack->top--;
+    return sym;
+}
+
+/**************************************************************
+ *
+ * Function name : judge_symbol
+ * Description : Judge whether the character is a calculation
+ *               symbol.
+ * Parameter : 
+ *              @ch The character.
+ * Return :
+ *              1 : The character is a calculation symbol;
+ *              0 : The character isn't a calculation symbol.
+ * Other : NULL
+ * ***********************************************************/
+int judge_symbol(char ch)
+{
+    if(ch=='+' || ch=='-' || ch=='*' || ch=='/' ||\
+       ch=='(' || ch==')' || ch=='=')
+        return 1;
+    return 0;
+}
+
+/**************************************************************
+ *
+ * Function name : op_cmp
+ * Description : Compare two operator precedence.
+ * Parameter : 
+ *              @op1 : The first operator.
+ *              @op2 : The second operator.
+ * Return :
+ *              '<' : The priority of first operator is greater
+ *                    than the priority of second operator.
+ *
+ *              '=' : The priority of first operator is equal
+ *                    to the priority of second operator.
+ *
+ *              '>' : The priority of first operator is less
+ *                    than the priority of second operator.
+ * Other :
+ *              op1 is the operator which is stack top pointer.
+ *              op2 is the operator which is the next pointer.
+ * ***********************************************************/
+char op_cmp(char op1, char op2)
+{
+    char result;
+
+    switch(op2)
+    {
+        case '+':
+        case '-':
+        {
+            result = (op1 =='(' || op1 == '=')?'<':'>';
+            break;
+        }
+        case '*':
+        case '/':
+        {
+            result = (op1 == '*' || op1 == '/' || op1 == ')')?'>':'<';
+            break;
+        }
+        case '(':
+        {
+            if(op1 == ')')
+            {
+                printf("input error\n");
+                return -1;
+            }
+            else
+            {
+                result = '<';
+            }
+            break;
+        }
+        case ')':
+        {
+            switch(op1)
+            {
+                case '(':
+                {
+                    result = '=';
+                    break;
+                }
+                case '=':
+                {
+                    printf("error input\n");
+                    return -1;
+                }
+                default:
+                    result = '>';
+            }
+            break;
+        }
+        case '=':
+        {
+            switch(op1)
+            {
+                case '=':
+                {
+                    result = '=';
+                    break;
+                }
+                case '(':
+                {
+                    printf("error input\n");
+                    return -1;
+                }
+                default:
+                    result = '>';
+            }
+        }
+    }
+    return result;
+}
+
+/**************************************************************
+ *
+ * Function name : calculate
+ * Description : Calculate addition, subtraction, multiplication
+ *               and division.
+ * Parameter : 
+ *              @num1   The first operand.
+ *              @num2   The second operand.
+ *              @op     Operator.
+ *              @result The final calculation result.
+ * Return :
+ *              -1 : Calculation error.
+ *               0 : Complete calculation.
+ * Other : NULL
+ * ***********************************************************/
+int calculate(double num1, double num2, char op,double *result)
+{
+    switch(op)
+    {
+        case '+':
+        {
+            *result = num1 + num2;
+            break;
+        }
+        case '-':
+        {
+            *result = num1 - num2;
+            break;
+        }
+        case '*':
+        {
+            *result = num1 * num2;
+            break;
+        }
+        case '/':
+        {
+            if(num2 == 0)
+            {
+                return -1;
+            }
+            *result = num1 / num2;
+            break;
+        }
+        default:
+            return -1;
+    }
+    return 0;
+}
+
+/**************************************************************
+ *
+ * Function name : ww_let
+ * Description : Print calculation results based on the
+ *               calculation expression entered by the user.
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
+void ww_let(char *arg[])
+{
+    int i, j=0, flag=0;
+    char str[20];
+    char exp[MAX_CMD_LEN];
+    char sign;
+    double num, num1, num2, result;
+    Stack_let_num stack_num;
+    Stack_let_sym stack_sym;
+
+/*
+    strcpy(exp, arg[1]);
+    i = strlen(exp);
+    exp[i] = '=';
+    exp[i+1] = '\0';
+*/
+    for(i=0;arg[1][i]!='\0';i++)
+    {
+        if(i>0)
+        {
+            if(arg[1][i]=='(' && arg[1][i-1]==')')
+            {
+                exp[j++] = '*';
+                exp[j++] = arg[1][i];
+                continue;
+            }
+        }
+        exp[j++] = arg[1][i];
+    }
+    exp[j++] = '=';
+    exp[j] = '\0';
+
+    //printf("----input is%s-----\n",arg[1]);
+    //printf("--------%s---------\n",exp);
+
+    init_stack_let_num(&stack_num);
+    init_stack_let_sym(&stack_sym);
+    memset(str, 0, sizeof(str));
+
+    stack_push_let_sym(&stack_sym, '=');
+    i = 0;
+    flag = 0;
+    while((exp[i]!='\0') && ((exp[i] != '=') ||stack_sym.sym[stack_sym.top] != '='))
+    {
+        if(judge_symbol(exp[i]) == 0)
+        {
+            j = 0;
+            while(judge_symbol(exp[i]) == 0)
+            {
+                if(exp[i]<48 || exp[i] >57)
+                    flag = 1;
+                str[j] = exp[i];
+                j++;
+                i++;
+            }
+            str[j] = '\0';
+            if(flag == 1)
+            {
+                if(find_var(str, &num) == 0)
+                {
+                    printf("variable %s does not exist!\n", str);
+                    return;
+                }
+            }
+            else
+                num = atof(str);
+            flag = 0;
+            if(stack_push_let_num(&stack_num, num) == -1)
+                return;
+            
+            //printf("%lf is store\n",stack_num.num[stack_num.top]);
+
+            memset(str, 0, sizeof(str));
+        }
+        else
+        {
+            switch(op_cmp(stack_sym.sym[stack_sym.top], exp[i]))
+            {
+                case '<':
+                {
+                    //printf("input %c,store\n", exp[i]);
+                    stack_push_let_sym(&stack_sym, exp[i]);
+                    i++;
+                    break;
+                }
+                case '=':
+                {
+                    //printf("input %c,pop %c\n", exp[i],stack_sym.sym[stack_sym.top]);
+                    sign = stack_pop_let_sym(&stack_sym);
+                    i++;
+                    break;
+                }
+                case '>':
+                {
+                    //printf("input %c,ji suan\n", exp[i]);
+                    sign = stack_pop_let_sym(&stack_sym);
+                    num1 = stack_pop_let_num(&stack_num);
+                    num2 = stack_pop_let_num(&stack_num);
+                    //printf("num1=%lf,num2=%lf,sign=%c\n",num1,num2,sign);
+                    if(calculate(num1, num2, sign, &result) == -1)
+                        return;
+                    if(stack_push_let_num(&stack_num, result) == -1)
+                        return;
+                    //printf("%lf is store\n", stack_num.num[stack_num.top]);
+                    break;
+                }
+            }
+        }
+    }
+    //printf("fin\n");
+    //for(j=0;j<=stack_num.top;j++)
+    //    printf("%lf\n",i,stack_num.num[j]);
+    printf("%lf\n", stack_num.num[stack_num.top]);
 }

@@ -13,9 +13,19 @@
 
 struct login_user_info login_user;
     
-/* Used to control whether the input echo is enabled 
- * option is 1 is enable echo,otherwise is disable.
- * */
+/**************************************************************
+ *
+ * Function name : set_disploy_mode
+ * Description : Used to control whether the input echo is
+ *               enabled.
+ * Parameter : 
+ *              @fd     File identifier.
+ *              @option To control enable or disable.
+ * Return :
+ *              1 : Set failed.
+ *              0 : Set successfully.
+ * Other : option is 1 means enable echo,otherwise means disable.
+ * ***********************************************************/
 int set_disploy_mode(int fd, int option)
 {
     struct termios termios_p;
@@ -41,6 +51,16 @@ int set_disploy_mode(int fd, int option)
     return 0;
 }
 
+/**************************************************************
+ *
+ * Function name : encryption
+ * Description : The simplest encryption algorithm used to
+ *               encrypt strings.
+ * Parameter : 
+ *              @info   The address of the string to be encrypted.
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void encryption(char *info)
 {
     while(*info)
@@ -50,6 +70,16 @@ void encryption(char *info)
     }
 }
 
+/**************************************************************
+ *
+ * Function name : get_username
+ * Description : Get the username based on user input.
+ * Parameter : 
+ *              @name   The address used to store the username.
+ *              @size   The size of address space.
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void get_username(char *name, int size)
 {
     int c, n;
@@ -68,6 +98,16 @@ void get_username(char *name, int size)
     }
 }
 
+/**************************************************************
+ *
+ * Function name : get_passwd
+ * Description : Get the password based on user input.
+ * Parameter : 
+ *              @name   The address used to store the password.
+ *              @size   The size of address space.
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void get_passwd(char *passwd, int size)
 {
     int c, n;
@@ -87,6 +127,16 @@ void get_passwd(char *passwd, int size)
 }
 
 
+/**************************************************************
+ *
+ * Function name : get_groupname
+ * Description : Get the group name based on user input.
+ * Parameter : 
+ *              @name   The address used to store the group name.
+ *              @size   The size of address space.
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void get_groupname(char *name, int size)
 {
     int c, n;
@@ -106,6 +156,16 @@ void get_groupname(char *name, int size)
 }
 
 
+/**************************************************************
+ *
+ * Function name : get_gid
+ * Description : Get the group id based on user input.
+ * Parameter : 
+ *              @name   The address used to store the gid.
+ *              @size   The size of address space.
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void get_gid(char *gid, int size)
 {
     int c, n;
@@ -124,11 +184,19 @@ void get_gid(char *gid, int size)
     }
 }
 
-/* check if the input user information is correct
- * user exist       1.passwd is correct return 0.
- *                  2.passwd is wrong return -1
- * user isn't exist 3.return 1            
- * */
+/**************************************************************
+ *
+ * Function name : check_user
+ * Description : Check if the login information entered by the
+ *               user is correct.
+ * Parameter : 
+ *              @user   Structure login_user_info.
+ * Return :
+ *              0 : User exist and passwd is correct.
+ *             -1 : User exist but passwd is wrong.
+ *              1 : User isn't exist.
+ * Other : NULL
+ * ***********************************************************/
 int check_user(struct login_user_info user)
 {
     FILE *fp;
@@ -159,6 +227,17 @@ int check_user(struct login_user_info user)
     return 1;
 }
 
+/**************************************************************
+ *
+ * Function name : login
+ * Description : A function that runs when the program starts
+ *               executing and is used to log in to the user.
+ * Parameter : NULL 
+ * Return :
+ *              0 : Login successfully.
+ *              1 : Login failed.
+ * Other : NULL
+ * ***********************************************************/
 int login()
 {
     get_username(login_user.name, MAX_USER_NAME);

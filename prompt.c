@@ -18,6 +18,17 @@
 
 extern struct login_user_info login_user;
 
+/**************************************************************
+ *
+ * Function name : ww_prompt
+ * Description : Get the information at the prompt and store
+ *               it in the specified address.
+ * Parameter : 
+ *              @prompt    Store the address of the information
+ *                         of the prompt.
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void ww_prompt(char *prompt)
 {
     char cwd[MAX_CWD];

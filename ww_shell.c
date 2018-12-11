@@ -18,7 +18,16 @@ extern int command_num;
 extern int history_num;
 Tree_var var_tree;
 
-/* signal processing function */
+/**************************************************************
+ *
+ * Function name : sig_handle
+ * Description : Signal processing function.
+ *               Define hot-key by signal.
+ * Parameter :
+ *              @sig    Signal code.
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void sig_handle(int sig)
 {
     /* Ctrl-C */
@@ -28,16 +37,30 @@ void sig_handle(int sig)
     }
 }
 
-
-/* define hot-key by signal
- * init signal capture processing
- * */ 
+/**************************************************************
+ *
+ * Function name : init_signal
+ * Description : Init signal capture processing.
+ * Parameter : NULL
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void init_signal()
 {
     /* Ctrl-C  */
     signal(SIGINT, sig_handle);
 }
 
+/**************************************************************
+ *
+ * Function name : init_history_command
+ * Description : When the program starts running, the history
+ *               commands stored on the hard disk are read into
+ *               the trie structure in the memory.
+ * Parameter : NULL
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void init_history_command()
 {
     FILE *fp;
@@ -69,12 +92,28 @@ void init_history_command()
     }
 }
 
-/* Initialize environment variable structure */
+/**************************************************************
+ *
+ * Function name : init_env_var
+ * Description : Initialize environment variable structure.
+ * Parameter : NULL
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void init_env_var()
 {
     memset(&var_tree, 0, sizeof(Tree_var));
 }
 
+/**************************************************************
+ *
+ * Function name : init
+ * Description : Initialization operation when the program
+ *               starts running.
+ * Parameter : NULL
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void init()
 {
     init_signal();
@@ -82,6 +121,15 @@ void init()
     init_env_var();
 }
 
+/**************************************************************
+ *
+ * Function name : main
+ * Description : The main function of the program, which is
+ *               also the main loop of the program.
+ * Parameter : NULL
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 int main()
 {
     extern char *s;

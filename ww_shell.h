@@ -42,6 +42,7 @@
 #define ASCII_SUB_BASE(x) (x-32)
 #define ASCII_ADD_BASE(x) (x+32)
 #define ENV_VAR_NAME_LEN 10
+#define MAX_LET_NUM 50
 
 char cmd_list[MAX_CMD_LIST][20];
 char pwd_list[MAX_PWD_LIST][20];
@@ -85,3 +86,14 @@ typedef struct var_node{
     struct var_node *next[ASCII_CHAR];
 }Tree_var;
 
+/* Storage data in expressions of let command */
+typedef struct stack_let_num{
+    double num[MAX_LET_NUM];                                                    
+    int top;
+}Stack_let_num;
+
+/* Storage symbol in expressions of let command */
+typedef struct stack_sym{
+    char sym[MAX_LET_NUM];
+    int top;
+}Stack_let_sym;

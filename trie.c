@@ -20,6 +20,17 @@ Com_list *rear;
 int command_num;
 int history_num;
 
+/**************************************************************
+ *
+ * Function name : store_command
+ * Description : Store the commands entered by the current user
+ *               into memory so that they are dumped to the
+ *               hard disk when the program finishes running.
+ * Parameter : 
+ *              @str    User-entered command. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void store_command(char *str)
 {
     Com_list *cur;
@@ -34,7 +45,22 @@ void store_command(char *str)
     command_num++;
 }
 
-/* match the command */
+/**************************************************************
+ *
+ * Function name : match_history
+ * Description : Find the matching string in trie according to
+ *               the string that the user has entered,and store
+ *               it in the specified address.
+ * Parameter : 
+ *              @input  The string that the user has entered.
+ *              @history_input  The address to store the matched
+ *                              string.
+ * Return :
+ *              -1 : Match failed.
+ *               0 : Match successfully.
+ *
+ * Other : NULL
+ * ***********************************************************/
 int match_history(char *input, char *history_input)
 {
     int i;
@@ -68,6 +94,19 @@ int match_history(char *input, char *history_input)
     return 0;
 }
 
+/**************************************************************
+ *
+ * Function name : find_max_next
+ * Description : Find the next most weighted character on the
+ *               specified node.
+ * Parameter : 
+ *              @cur   The node of trie that stores history
+ *                     command. 
+ * Return :
+ *              -1 : After the node is all NULL.
+ *           other : Find success and return its index.
+ * Other : NULL
+ * ***********************************************************/
 int find_max_next(Tree *cur)
 {
     int i;
@@ -86,8 +125,18 @@ int find_max_next(Tree *cur)
     return flag;
 }
 
-
-// DEBUG: traversing the tree
+/**************************************************************
+ *
+ * Function name : traverse_tree
+ * Description : Traversing the trie that stores history
+ *               commands to debug.
+ * Parameter : 
+ *              @cur   The node of trie that stores history
+ *                     command. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
+#ifdef DEBUG
 void traverse_tree(Tree *cur)
 {
     static char command[MAX_CMD_LEN];
@@ -108,8 +157,17 @@ void traverse_tree(Tree *cur)
         pos--;
     }
 }
+#endif
 
-/* insert command into tree */
+/**************************************************************
+ *
+ * Function name : insert_tree
+ * Description : insert command into the trie that stores history.
+ * Parameter : 
+ *              @str    User-entered command. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void insert_tree(char *str)
 {
     int i;

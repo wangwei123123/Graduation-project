@@ -11,6 +11,17 @@
 #include "ww_shell.h"
 //#define DEBUG
 
+/**************************************************************
+ *
+ * Function name : ww_exec
+ * Description : Distinguish between built-in commands and
+ *               external commands, and execute.
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : Arg[0] is the commands,and the others is command
+ *         parameter.
+ * ***********************************************************/
 void ww_exec(char *arg[])
 {
     int status;
@@ -36,6 +47,8 @@ void ww_exec(char *arg[])
         ww_unset(arg);
     else if(strcmp(arg[0], "echo") == 0)
         ww_echo(arg);
+    else if(strcmp(arg[0], "let") == 0)
+        ww_let(arg);
     else
     {
         /* fork off child process */

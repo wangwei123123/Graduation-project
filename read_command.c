@@ -177,7 +177,18 @@ int match_history(char *input, char *history_input)
 }
 */
 
-/* auto completion command and auto completion of tab */
+/**************************************************************
+ *
+ * Function name : auto_cmd
+ * Description : Automatically matches strings based on the
+ *               user's input string and makes changes to the
+ *               display on the screen.
+ * Parameter : NULL
+ * Return : NULL
+ * Other : Because this function needs to open a character
+ *         device file for listening, it requires special
+ *         permission to run this program.
+ * ***********************************************************/
 void auto_cmd()
 {
     int keys_fd;
@@ -303,6 +314,15 @@ void write_into_history(char *s)
 }
 */
 
+/**************************************************************
+ *
+ * Function name : ww_read_command
+ * Description : Read user input. 
+ * Parameter :
+ *              @prompt Command input prompt.
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
 void ww_read_command(char *prompt)
 {
     pthread_t thread_id;

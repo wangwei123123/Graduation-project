@@ -20,6 +20,8 @@
 #define PASSWD_PATH_TMP "./etc/passwd.tmp"
 #define GROUP_PATH "./etc/group"
 #define GROUP_PATH_TMP "./etc/group.tmp"
+#define INTRODUCTION_PATH "./etc/introduction.doc"
+#define INTRODUCTION_PATH_TMP "./etc/introduction.doc.tmp"
 #define MAX_CWD 50
 #define MAX_HOSTNAME 50
 #define MAX_CMD_LIST 2000
@@ -35,6 +37,7 @@
 #define MAX_GROUP 3
 #define MAX_PASSWD_ITEM 100
 #define MAX_GROUP_ITEM 100
+#define MAX_HELP_LINE 100
 #define ECHO_FLAGS (ECHO | ECHOE | ECHOK | ECHONL)
 #define MAX_LOGIN_TIMES 3
 #define MAGICAL 4

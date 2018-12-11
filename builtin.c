@@ -13,6 +13,43 @@
 
 /**************************************************************
  *
+ * Function name : ww_help
+ * Description : Print help informations.
+ * Parameter : NULL
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
+void ww_help()
+{
+    FILE *fp, *ftp;
+    char str[MAX_HELP_LINE];
+    char para[MAX_HELP_LINE];
+
+    fp = fopen(INTRODUCTION_PATH, "r");
+    ftp = fopen(INTRODUCTION_PATH_TMP, "w+");
+
+    sprintf(para, "%s %s", "less -r", INTRODUCTION_PATH_TMP);
+
+    fgets(str, sizeof(str), fp);
+    while(!feof(fp))
+    {
+        if(str[0]>64 && str[0]<91)
+        {
+            str[strlen(str)-1] = '\0';
+            fprintf(ftp, "\033[1m%s\033[m\n", str);
+        }
+        else
+            fprintf(ftp, "%s", str);
+        fgets(str, sizeof(str), fp);
+    }
+
+    system(para);
+    remove(INTRODUCTION_PATH_TMP);
+}
+
+
+/**************************************************************
+ *
  * Function name : ww_exit
  * Description : The program exits and performs a custom action
  *               before exiting.E.g,save the commands entered

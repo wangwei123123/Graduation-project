@@ -12,9 +12,9 @@ DESCRIPTION
         simplify development problems in daily production operations.
 
 SPECIAL FUNCTION
-    
+
     Automatic completion based on historical commands:
-        
+
         Description:
             When the user types a command, the program automatically fills in
         the current input according to the typed string and the history input
@@ -64,3 +64,54 @@ SPECIAL FUNCTION
 
             Ctrl - c    :   exit the program.(builtin command : exit)
 
+BUILT-IN COMMANDS
+
+    help
+            Print help informations.
+
+    set
+            [set a = 1]
+            Setting environment variables.
+
+    unset
+            [unset a]
+            Unsetting environment variables.
+
+    echo
+            Print user input. 
+
+    let
+            A simple built-in calculator that currently only supports addition,
+            subtraction, multiplication and division, and parentheses, as well as
+            multiplication of two connected representatives.
+
+    cd
+            Change current directory.
+
+    adduser
+            Add a user.
+            PS : 
+                Currently passwords only support uppercase and lowercase letters
+                and numbers.If the input group id does not exist,it is the default
+                group id 0.The password will be encrypted and the username, group
+                id, etc. will be stored in the configuration file ./etc/passwd.
+
+    deluser
+            Del a user.
+
+    addgroup
+            Add a user group.
+            PS :
+                The current password only supports uppercase and lowercase letters
+                and numbers. The relevant information of the group will be stored
+                in the configuration file ./etc/group.
+
+    delgroup
+            Del a group.
+
+    history [clear]
+           If the parameter is empty,print the history command file.If the parameter
+           is clear, clear the history command file.  
+
+    exit
+            Exit the program.(or use the hot-key Ctrl - c.)

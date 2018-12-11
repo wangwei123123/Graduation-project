@@ -29,6 +29,8 @@ void ww_exec(char *arg[])
    
     if(strcmp(arg[0], "exit") == 0)
         ww_exit();
+    else if(strcmp(arg[0], "help") == 0)
+        ww_help();
     else if(strcmp(arg[0], "history") == 0)
         ww_history(arg);
     else if(strcmp(arg[0], "adduser") == 0)

@@ -41,6 +41,8 @@ void ww_exec(char *arg[])
         ww_deluser(arg);
     else if(strcmp(arg[0], "delgroup") == 0)
         ww_delgroup(arg);
+    else if(strcmp(arg[0], "su") == 0)
+        ww_su(arg);
     else if(strcmp(arg[0], "cd") == 0)
         ww_cd(arg);
     else if(strcmp(arg[0], "set") == 0)
@@ -51,6 +53,12 @@ void ww_exec(char *arg[])
         ww_echo(arg);
     else if(strcmp(arg[0], "let") == 0)
         ww_let(arg);
+    else if(strcmp(arg[0], "which") == 0)
+        ww_which(arg);
+    else if(strcmp(arg[0], "type") == 0)
+        ww_type(arg);
+    else if(strcmp(arg[0], "test") == 0)
+        ww_test(arg);
     else
     {
         /* fork off child process */

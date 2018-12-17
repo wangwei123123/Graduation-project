@@ -2,6 +2,7 @@
 #include <pwd.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
 #include <dirent.h>
@@ -28,6 +29,7 @@
 #define MAX_PWD_LIST 2000
 #define MAX_ARG 20
 #define MAX_CMD_LEN 100
+#define MAX_BUILTIN_LEN 15
 #define MAX_PROMPT_LEN 100
 #define MAX_HISTORY_COMMAND_LINE 500
 #define MAX_USER_NAME 50
@@ -46,6 +48,9 @@
 #define ASCII_ADD_BASE(x) (x+32)
 #define ENV_VAR_NAME_LEN 10
 #define MAX_LET_NUM 50
+#define PATH_NUM 6
+#define PATH "/usr/local/bin","/usr/local/sbin","/usr/bin","/usr/sbin","/bin","/sbin"
+#define BUILT_IN "exit","help","history","adduser","addgroup","deluser","delgroup","su","cd","set","unset","echo","let","which","type","test",NULL
 
 char cmd_list[MAX_CMD_LIST][20];
 char pwd_list[MAX_PWD_LIST][20];
@@ -58,6 +63,7 @@ void ww_read_command(char *);
 struct current_user_info{
     char hostname[MAX_HOSTNAME];
     struct passwd *pwd;
+    //char cwd[MAX_CWD];
     char *cwd;
 }current_user_info;
 
@@ -100,3 +106,9 @@ typedef struct stack_sym{
     char sym[MAX_LET_NUM];
     int top;
 }Stack_let_sym;
+
+/* trie to store built-in command name */
+typedef struct builtin_cmd_node{
+    int flag;
+    struct builtin_cmd_node *next[ASCII_CHAR];
+}Tree_builtin;

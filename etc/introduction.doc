@@ -69,6 +69,9 @@ BUILT-IN COMMANDS
     help
             Print help informations.
 
+    test
+    
+            
     set
             [set a = 1]
             Setting environment variables.

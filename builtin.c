@@ -11,6 +11,7 @@
 #include "ww_shell.h"
 //#define DEBUG
 
+char pre_pwd[MAX_CWD];
 /**************************************************************
  *
  * Function name : ww_help
@@ -482,6 +483,67 @@ void ww_delgroup(char *arg[])
 
 /**************************************************************
  *
+ * Function name : ww_su
+ * Description : Change current user. 
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
+void ww_su(char *arg[])
+{
+    extern struct login_user_info login_user;
+    struct login_user_info su_user;
+    FILE *fp;
+    char str_p[MAX_PASSWD_ITEM];
+    int i, u_flag=0;
+
+    memset(&su_user, 0, sizeof(su_user));
+    
+    strcpy(su_user.name, arg[1]);
+    fp = fopen(PASSWD_PATH, "r");
+    fgets(str_p, MAX_PASSWD_ITEM, fp);
+    while(!feof(fp))
+    {
+        i = 0;
+        while(str_p[i]!=';' && su_user.name[i]!='\0')
+        {
+            i++;
+            if(str_p[i] != su_user.name[i])
+                break;
+        }
+        if(str_p[i]==';' && su_user.name[i]=='\0')
+        {
+            u_flag = -1;
+            break;
+        }
+        fgets(str_p, MAX_PASSWD_ITEM, fp);
+    }
+    fclose(fp);
+    if(u_flag == 0)
+    {
+        printf("su: user %s does not exist.\n", su_user.name);
+        return;
+    } 
+
+    set_disploy_mode(STDIN_FILENO, 0); 
+    get_passwd(su_user.passwd, MAX_USER_PASSWD);
+    set_disploy_mode(STDIN_FILENO, 1);
+    printf("\n");
+
+    if(check_user(su_user) == -1)
+    {
+        printf("su: Authentication failure.\n");
+        return;
+    }
+
+    strcpy(login_user.name, su_user.name);
+    strcpy(login_user.passwd, su_user.passwd);
+}
+
+
+/**************************************************************
+ *
  * Function name : ww_cd
  * Description : Change current directory. 
  * Parameter : 
@@ -491,11 +553,15 @@ void ww_delgroup(char *arg[])
  * ***********************************************************/
 void ww_cd(char *arg[])
 {
-    if(chdir(arg[1]))
+    char pwd[MAX_CWD];
+    getcwd(pwd, sizeof(pwd));
+    if(strcmp(arg[1], "-") == 0)
     {
-        perror("chdir");
+        chdir(pre_pwd);
     }
-    
+    else
+        chdir(arg[1]);
+    strcpy(pre_pwd, pwd);
 }
 
 /**************************************************************
@@ -567,8 +633,7 @@ void insert_var_tree(char *str, double value)
  * Function name : traverse_var_tree
  * Description : Traversing the trie of the stored variable.
  * Parameter : 
- *              @str    Specify variable name.
- *              @value  Value of the variable.
+ *              @cur    The node of Tree_var.
  * Return : NULL 
  * Other : NULL
  * ***********************************************************/
@@ -1094,4 +1159,414 @@ void ww_let(char *arg[])
     //for(j=0;j<=stack_num.top;j++)
     //    printf("%lf\n",i,stack_num.num[j]);
     printf("%lf\n", stack_num.num[stack_num.top]);
+}
+
+
+/**************************************************************
+ *
+ * Function name : which
+ * Description : Print the specified command file path.
+ * Parameter : 
+ *              @str   Command name.
+ *              @cmd_path The address to store the path of command.
+ * Return :
+ *              0 : Find success.
+ *              1 : Find failure.
+ * Other : NULL
+ * ***********************************************************/
+int which(char *str,char *cmd_path)
+{
+    int j;
+    DIR *dir;
+    struct dirent *ptr;
+    char *path[PATH_NUM] = {PATH};
+
+    for(j=0;j<PATH_NUM;j++)
+    {
+        if((dir = opendir(path[j])) == NULL)
+        {
+            perror("Open dir");
+            return;
+        }
+
+        while((ptr = readdir(dir)) != NULL)
+        {
+            if(strcmp(ptr->d_name, ".")==0 || strcmp(ptr->d_name, "..")==0)
+            {
+                continue;
+            }
+
+            if(ptr->d_type == 8)//file
+            {
+                if(strcmp(ptr->d_name, str) == 0)
+                {
+                    sprintf(cmd_path, "%s/%s", path[j], ptr->d_name);
+                    return 0;
+                }
+            }
+            /*
+            else if(ptr->d_type == 10)//link file
+            {
+                //.....
+            }
+            else if(ptr->d_type == 4)//dir
+            {
+                //.....
+            }
+            */
+        }
+        closedir(dir);
+    }
+    return 1;
+}
+
+/**************************************************************
+ *
+ * Function name : ww_which
+ * Description : Print the specified command list file path.
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
+void ww_which(char *arg[])
+{
+    int i;
+    char cmd_path[MAX_CMD_LEN];
+
+    for(i=1;arg[i]!=NULL;i++)
+    {
+        if(which(arg[i], cmd_path) == 1)
+            printf("which: no %s in (/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin)\n", arg[i]);
+        else
+            printf("%s\n", cmd_path);
+    }
+}
+
+/**************************************************************
+ *
+ * Function name : insert_builtin_tree
+ * Description : Save built-in command in the trie.
+ * Parameter : 
+ *              @str    Specify built-in command name.
+ * Return : NULL 
+ * Other : NULL
+ * ***********************************************************/
+void insert_builtin_tree(char *str)
+{
+    int i;
+    Tree_builtin *cur;
+    extern Tree_builtin builtin_tree;
+
+    cur = &builtin_tree;
+    
+    for(i=0;str[i]!='\0';i++)
+    {
+        if(cur->next[ASCII_SUB_BASE(str[i])] == NULL)
+        {
+            Tree_builtin *new = (Tree_builtin*)malloc(sizeof(Tree_builtin));
+            memset(new, 0, sizeof(Tree_builtin));
+            cur->next[ASCII_SUB_BASE(str[i])] = new;
+        }
+        cur = cur->next[ASCII_SUB_BASE(str[i])];
+    }
+    cur->flag=1;
+    return;
+}
+
+/**************************************************************
+ *
+ * Function name : traverse_builtin_tree
+ * Description : Traversing the trie stored the name of built-in 
+ *               commands.
+ * Parameter : 
+ *              @cur    The node of the Tree_builtin.
+ * Return : NULL 
+ * Other : NULL
+ * ***********************************************************/
+#ifdef DEBUG
+void traverse_builtin_tree(Tree_builtin *cur)
+{
+    static char name[MAX_BUILTIN_LEN];
+    static int pos = 0;
+    int i;
+
+    if(cur == NULL)
+        return;
+    if(cur->flag)
+    {
+        name[pos] = '\0';
+        printf("%s\n", name);
+    }
+    for(i=0;i<ASCII_CHAR;i++)
+    {
+        name[pos++] = ASCII_ADD_BASE(i);
+        traverse_builtin_tree(cur->next[i]);
+        pos--;
+    }
+}
+#endif
+
+
+/**************************************************************
+ *
+ * Function name : find_builtin
+ * Description : Find built-in command.
+ * Parameter : 
+ *              @str    Command name.
+ * Return :
+ *              1 : Str does not exist in built-in commands trie.
+ *              0 : Str exist in built-in commands trie.
+ * Other : NULL
+ * ***********************************************************/
+int find_builtin(char *str)
+{
+    int i;
+    Tree_builtin *cur;
+    extern Tree_builtin builtin_tree;
+
+    cur = &builtin_tree;
+    for(i=0;str[i]!='\0';i++)
+    {
+        if(cur->next[ASCII_SUB_BASE(str[i])] == NULL)
+        {
+            return 1;
+        }
+        cur = cur->next[ASCII_SUB_BASE(str[i])];
+    }
+    return 0;
+}
+
+/**************************************************************
+ *
+ * Function name : ww_type
+ * Description : Determine whether the specified command is a
+ *               built-in command or an external command.
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
+void ww_type(char *arg[])
+{
+    int i;
+    char cmd_path[MAX_CMD_LEN];
+
+    for(i=1;arg[i]!=NULL;i++)
+    {
+        if(find_builtin(arg[i]) == 0)
+            printf("%s is a shell builtin\n", arg[i]);
+        else
+            if(which(arg[i], cmd_path) == 1)
+                printf("type: %s: not found\n", arg[i]);
+            else
+                printf("%s is %s\n", arg[i], cmd_path);
+    }
+}
+
+/**************************************************************
+ *
+ * Function name : ww_test
+ * Description : Used to check if a condition is true,it can
+ *               test both values and files.
+ * Parameter : 
+ *              @arg   User-entered string. 
+ * Return : NULL
+ * Other :
+ *          values
+ *                  -eq     VALUE1 is equal to VALUE2;
+ *
+ *                  -ne     VALUE1 is not equal to VALUE2;
+ *
+ *                  -gt     VALUE1 is greater than VALUE2;
+ *
+ *                  -ge     VALUE1 is greater than or equal
+ *                          to VALUE2;
+ *
+ *                  -lt     VALUE1 is less than VALUE2;
+ *
+ *                  -le     VALUE1 is less than or equal to
+ *                          VALUE2;
+ *
+ *          files
+ *                  -e      FILE exists;
+ *
+ *                  -r      FILE exists and read permission is
+ *                          granted;
+ *
+ *                  -w      FILE exists and write permission is
+ *                          granted;
+ *
+ *                  -x      FILE exists and execute (or search)
+ *                          permission is granted;
+ *
+ *                  -s      FILE exists and has a size greater
+ *                          than zero;
+ *
+ *                  -d      FILE exists and is a directory;
+ *
+ *                  -f      FILE exists and is a regular file;
+ *
+ *                  -c      FILE exists and is character special;
+ *
+ *                  -b      FILE exists and is block special.
+ * ***********************************************************/
+void ww_test(char *arg[])
+{
+    int i;
+    int flag = 0;
+    double n1, n2;
+    int result;//0 is true ; -1 is false.
+
+    for(i=0;arg[i]!=NULL;i++)
+    {
+        if(!strcmp(arg[i],"-eq") || !strcmp(arg[i],"-ne") || !strcmp(arg[i],"-gt") \
+            || !strcmp(arg[i],"-ge")|| !strcmp(arg[i],"-lt") || !strcmp(arg[i],"-le"))
+            flag = 1;
+        if(!strcmp(arg[i],"-e") || !strcmp(arg[i],"-r") || !strcmp(arg[i],"-w") \
+            || !strcmp(arg[i],"-x")|| !strcmp(arg[i],"-s") || !strcmp(arg[i],"-d") \
+            || !strcmp(arg[i],"-f")|| !strcmp(arg[i],"-c") || !strcmp(arg[i],"-b"))
+            flag = 2;
+    }
+
+    if(flag == 1)
+    {
+        n1 = atof(arg[1]);
+        n2 = atof(arg[3]);
+
+        if(!strcmp(arg[2], "-eq"))
+        {
+            if(n1 == n2)
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[2], "-ne"))
+        {
+            if(n1 != n2)
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[2], "-gt"))
+        {
+            if(n1 > n2)
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[2], "-ge"))
+        {
+            if(n1 >= n2)
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[2], "-lt"))
+        {
+            if(n1 < n2)
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[2], "-le"))
+        {
+            if(n1 <= n2)
+                result = 0;
+            else
+                result = -1;
+        }
+    }
+    else if(flag == 2)
+    {
+        if(!strcmp(arg[1], "-e"))
+        {
+            if(access(arg[2],F_OK) != -1)
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[1], "-r"))
+        {
+            if(access(arg[2],R_OK) != -1)
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[1], "-w"))
+        {
+            if(access(arg[2],W_OK) != -1)
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[1], "-x"))
+        {
+            if(access(arg[2],X_OK) != -1)
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[1], "-s"))
+        {
+            FILE *fp;
+            char ch;
+
+            fp = fopen(arg[2], "r");
+            ch = fgetc(fp);
+            if(ch != EOF)
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[1], "-d"))
+        {
+            struct stat buf;
+            
+            lstat(arg[2], &buf);
+            if(S_ISDIR(buf.st_mode))
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[1], "-f"))
+        {
+            struct stat buf;
+            
+            lstat(arg[2], &buf);
+            if(S_ISREG(buf.st_mode))
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[1], "-c"))
+        {
+            struct stat buf;
+            
+            lstat(arg[2], &buf);
+            if(S_ISCHR(buf.st_mode))
+                result = 0;
+            else
+                result = -1;
+        }
+        else if(!strcmp(arg[1], "-b"))
+        {
+            struct stat buf;
+           
+            lstat(arg[2], &buf);
+            if(S_ISBLK(buf.st_mode))
+                result = 0;
+            else
+                result = -1;
+        }
+    }
+    else
+    {
+        printf("Input format error\n");
+        return;
+    }
+    if(result == 0)
+        printf("TRUE\n");
+    else
+        printf("FALSE\n");
 }

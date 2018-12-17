@@ -17,6 +17,7 @@ extern Com_list *rear;
 extern int command_num;
 extern int history_num;
 Tree_var var_tree;
+Tree_builtin builtin_tree;
 
 /**************************************************************
  *
@@ -107,6 +108,25 @@ void init_env_var()
 
 /**************************************************************
  *
+ * Function name : init_builtin_cmd
+ * Description : Initialize the trie stored the name of built-in 
+ *               commands.
+ * Parameter : NULL
+ * Return : NULL
+ * Other : NULL
+ * ***********************************************************/
+void init_builtin_cmd()
+{
+    int i;
+    char *list[]={BUILT_IN};
+
+    memset(&builtin_tree, 0, sizeof(Tree_builtin));
+    for(i=0;list[i]!=NULL;i++)
+        insert_builtin_tree(list[i]);
+}
+
+/**************************************************************
+ *
  * Function name : init
  * Description : Initialization operation when the program
  *               starts running.
@@ -119,6 +139,7 @@ void init()
     init_signal();
     init_history_command();
     init_env_var();
+    init_builtin_cmd();
 }
 
 /**************************************************************

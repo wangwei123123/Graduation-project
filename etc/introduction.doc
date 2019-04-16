@@ -70,26 +70,72 @@ BUILT-IN COMMANDS
             Print help informations.
 
     test
-    
+            Used to check if a condition is true,it can test both values and
+            files.
+            test VALUE1 OPTION VALUE2
+            test OPTION FILENAME
+                values
+                        -eq     VALUE1 is equal to VALUE2;
+
+                        -ne     VALUE1 is not equal to VALUE2;
+
+                        -gt     VALUE1 is greater than VALUE2;
+
+                        -ge     VALUE1 is greater than or equal to VALUE2;
+
+                        -lt     VALUE1 is less than VALUE2;
+
+                        -le     VALUE1 is less than or equal to VALUE2
+
+                files
+                        -e      FILE exists;
+
+                        -r      FILE exists and read permission is granted;
+
+                        -w      FILE exists and write permission is granted;
+                        
+                        -x      FILE exists and execute (or search) permission is granted;
+
+                        -s      FILE exists and has a size greater than zero;
+
+                        -d      FILE exists and is a directory;
+
+                        -f      FILE exists and is a regular file;
+
+                        -c      FILE exists and is character special;
+
+                        -b      FILE exists and is block special.
             
     set
-            [set a = 1]
             Setting environment variables.
+            set VARIABLE = VALUES
 
     unset
-            [unset a]
             Unsetting environment variables.
+            unset VARIABLIE 
 
     echo
-            Print user input. 
+            Display a line of text.
+            echo [STRING]
 
     let
             A simple built-in calculator that currently only supports addition,
             subtraction, multiplication and division, and parentheses, as well as
             multiplication of two connected representatives.
+            let EXPRESSION
 
     cd
             Change current directory.
+            cd DIR 
+
+    which
+            Print the specified command list file path.
+            which COMMAND
+
+    type
+            Determine whether the specified command is a built-in command or an
+            external command.
+            type COMMAND
 
     adduser
             Add a user.
@@ -101,16 +147,20 @@ BUILT-IN COMMANDS
 
     deluser
             Del a user.
+            deluser USER
 
     addgroup
-            Add a user group.
-            PS :
-                The current password only supports uppercase and lowercase letters
-                and numbers. The relevant information of the group will be stored
-                in the configuration file ./etc/group.
+            Add a user group.ps:The current password only supports uppercase and
+            lowercase letters and numbers.The relevant information of the group
+            will be stored in the configuration file ./etc/group.
 
     delgroup
             Del a group.
+            delgroup GROUP
+
+    su
+            Change current user.ps:This feature is not yet complete.
+            su USER
 
     history [clear]
            If the parameter is empty,print the history command file.If the parameter

@@ -26,6 +26,7 @@ void ww_help()
     char str[MAX_HELP_LINE];
     char para[MAX_HELP_LINE];
 
+
     fp = fopen(INTRODUCTION_PATH, "r");
     ftp = fopen(INTRODUCTION_PATH_TMP, "w+");
 
@@ -43,7 +44,8 @@ void ww_help()
             fprintf(ftp, "%s", str);
         fgets(str, sizeof(str), fp);
     }
-
+    fclose(fp);
+    fclose(ftp);
     system(para);
     remove(INTRODUCTION_PATH_TMP);
 }
